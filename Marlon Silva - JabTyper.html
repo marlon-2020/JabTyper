@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            width: 1920px;
+            height: 1080px;
+            margin: auto;
+            text-align: center;
+        }
+
+        #titulo,
+        #frase,#play {
+            font-size: 30px;
+            font-family: "Courier New", Courier, monospace;
+            color: black;
+            text-shadow: 2px 2px 2px white;
+        }
+
+        #texto {
+            border: 4px groove black;
+            border-radius: 20px;
+            resize: none;
+            width: 1820px;
+            height: 50px;
+        }
+
+        #tabela {
+            width: 700px;
+            height: 200px;
+            margin: auto;
+            background-color: lightgrey;
+            font-family: "Courier New", Courier, monospace;
+            font-size: 20px;
+        }
+        button:hover{
+            cursor: pointer;
+        }
+
+        ul {
+            font-size: 20px;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+</head>
+
+<body>
+    <script>
+        $(document).ready(function () {
+
+            /*-----FUNÇÃO DIGITE O NOME DO USUÁRIO-----*/
+            function digite_nome() {
+                x = prompt("DIGITE O SEU NOME:");
+                while (x == "" || x == null) {
+                    x = prompt("PRECISA DIGITAR O NOME! DIGITE O SEU NOME:");
+                }
+                return x;
+            }
+
+            /*-----FUNÇÃO RESETA O BLOQUEIO DO TEXTAREA E DO BOTÃO-----*/
+            function reseta_bloqueio() {
+                $("#aperta").prop("disabled", false);
+                $("#texto").prop("disabled", false);
+                $("#texto").val("");
+            }
+
+            /*-----FUNÇÃO BLOQUEIO DOS BOTÕES-----*/
+            function bloqueia_botao() {
+                $("#aperta").prop("disabled", true);
+                $("#remove1").prop("disabled", true);
+                $("#remove2").prop("disabled", true);
+                $("#remove3").prop("disabled", true);
+            }
+
+            /*-----FUNÇÃO ADICIONA NOME NO PLACAR-----*/
+            function adiciona_nome() {
+                var verifica_nome1 = $("#nome1").text();
+                var verifica_nome2 = $("#nome2").text();
+                var verifica_nome3 = $("#nome3").text();
+                if (verifica_nome1 == "") {
+                    $("#nome1").text(nome);
+                } else if (verifica_nome2 == "") {
+                    $("#nome2").text(nome);
+                } else if (verifica_nome3 == "") {
+                    $("#nome3").text(nome);
+                }
+            }
+
+            /*-----FUNÇÃO ADICIONA NÚMERO DE PALABRAS DIGITADAS NO PLACAR-----*/
+            function adiciona_n_palavras() {
+                var verifica_n1 = $("#n1").text();
+                var verifica_n2 = $("#n2").text();
+                var verifica_n3 = $("#n3").text();
+                if (verifica_n1 == "") {
+                    $("#n1").text(armazena_contador_palavras * 6 + "ppm");
+                } else if (verifica_n2 == "") {
+                    $("#n2").text(armazena_contador_palavras * 6 + "ppm");
+                } else if (verifica_n3 == "") {
+                    $("#n3").text(armazena_contador_palavras * 6 + "ppm");
+                }
+            }
+
+            /*-----FUNÇÃO CONTA NÚMERO DE PALAVRAS DIGITADAS DO USUÁRIO-----*/
+            function contador_c_p() {
+                var caracteres = $("#texto").val();
+                var contador_caracteres = caracteres.split("").length;
+                var contador_palavras = caracteres.split(" ").length;
+                armazena_contador_palavras = contador_palavras;
+                $("#n_carac").text(contador_caracteres);
+                if (caracteres == "") {
+                    $("#n_palavras2").text("0");
+                } else {
+                    $("#n_palavras2").text(contador_palavras);
+                }
+            }
+
+            /*-----FUNÇÃO TRAVA TEXTAREA E CONTA OS SEGUNDOS-----*/
+            function contador_segundos() {
+                $("#texto").one("click", function () {
+                    bloqueia_botao();
+                    var contador = $("#n_segundos").text();
+                    var parar = setInterval(function () {
+                        contador--;
+                        if (contador == 0) {
+                            clearInterval(parar);
+                            $("#texto").prop("disabled", true);
+                            $("#aperta").prop("disabled", false);
+                            $("#remove1").prop("disabled", false);
+                            $("#remove2").prop("disabled", false);
+                            $("#remove3").prop("disabled", false);
+                            contador_c_p();
+                            adiciona_nome();
+                            adiciona_n_palavras();
+                        }
+                        $("#n_segundos").text(contador);
+                    }, 1000);
+                });
+            }
+
+            /*-----PROGRAMA COMEÇA ARMAZENANDO O VALOR FIXO DE SEGUNDOS PARA DIGITAR-----*/
+
+            original = $("#n_segundos").text();
+            var armazena_contador_palavras = "";
+
+            /*-----CONTADOR DE PALAVRAS FIXAS DO TOPO DA TELA-----*/
+            var frase = $("#frase").text();
+            var contador_palavras = frase.split(" ").length;
+            $("#n_palavras").text(contador_palavras);
+            
+            /*CRIA A VARIÁVEL QUE ARMAZENARÁ O NOME E DESABILITA O TEXTAREA, ESPERANDO O CLIQUE EM PLAY PARA COMEÇAR*/
+            var nome ='';
+            $("#texto").prop("disabled", true);
+
+            /*-----BOTÃO PLAY - COMEÇA O JOGO-----*/
+            $("#aperta").click(function () {
+                reseta_bloqueio();
+                $("#n_segundos").text(original);
+                nome = digite_nome();
+                contador_segundos();
+            });
+
+            /*-----REMOVEDOR DE NOMES-----*/
+            $("#remove1").click(function () {
+                $("#nome1").text("");
+                $("#n1").text("");
+            });
+            $("#remove2").click(function () {
+                $("#nome2").text("");
+                $("#n2").text("");
+            });
+            $("#remove3").click(function () {
+                $("#nome3").text("");
+                $("#n3").text("");
+            });
+        });     
+    </script>
+        <div id="corpo">
+            <h1 id="titulo">JAB Typer</h1>
+            <h2 id="frase">Você precisa digitar ESTA frase na caixa de TEXTO ABAIXO o mais rápido possível para verificar a sua velocidade na digitação em um teclado, boa sorte e não trapaceie.</h2>
+            <ul type="none">
+                <li><b id="n_palavras">0</b> palavras</li>
+                <li><b id="n_segundos">10</b> segundos</li>
+            </ul>
+            <textarea id="texto" cols="45" rows="10"></textarea>
+            <br>
+            <legend id="play"> Aperte o BOTÃO de PLAY para começar o jogo</legend>
+            <button id="aperta">
+                <svg width="4em" height="4em" viewBox="0 0 16 16" class="bi bi-play-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M11.596 8.697l-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"/>
+                </svg>
+            </button>
+            <ul type="none">
+                <li><b id="n_carac">0</b> caracteres</li>
+                <li><b id="n_palavras2">0</b> palavras</li>
+            </ul>
+            <table id="tabela">
+                <tr>
+                    <th>Usuário</th>
+                    <th>Nº de palavras</th>
+                    <th>Remover?</th>
+                </tr>
+                <tr>
+                    <td id="nome1"></td>
+                    <td id="n1"></td>
+                    <td>
+                        <button id="remove1">
+                            <svg width="3em" height="3em" viewBox="0 0 16 16" class="bi bi-trash-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5a.5.5 0 0 0-1 0v7a.5.5 0 0 0 1 0v-7z"/>
+                            </svg>
+                        </button>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="nome2"></td>
+                    <td id="n2"></td>
+                    <td>
+                        <button id="remove2">
+                            <svg width="3em" height="3em" viewBox="0 0 16 16" class="bi bi-trash-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5a.5.5 0 0 0-1 0v7a.5.5 0 0 0 1 0v-7z"/>
+                            </svg>
+                        </button>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="nome3"></td>
+                    <td id="n3"></td>
+                    <td>
+                        <button id="remove3">
+                            <svg width="3em" height="3em" viewBox="0 0 16 16" class="bi bi-trash-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5a.5.5 0 0 0-1 0v7a.5.5 0 0 0 1 0v-7z"/>
+                            </svg>
+                        </button>
+                    </td>
+                </tr>
+            </table>
+            
+        </div>
+    
+</body>
+
+</html>
